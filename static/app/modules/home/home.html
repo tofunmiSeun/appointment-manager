@@ -1,0 +1,107 @@
+<style>
+    #mainBody {
+        min-height: 100%; /* Fallback for browsers do NOT support vh unit */
+        min-height: 100vh; /* These two lines are counted as one :-)       */
+    }
+
+    #mainNav {
+        padding: 15px 30px 10px 10px;
+        background-color: green;
+        min-height: 63px;
+    }
+
+    .sideNavButton {
+        font-size: 16pt;
+        padding-left: 30px;
+        color: black;
+    }
+
+    .display-4 {
+        font-size: 2em;
+    }
+
+    .form-control[readonly] {
+        background-color: floralwhite;
+    }
+
+</style>
+<!-- STYLING -->
+<div id="mainBody">
+    <nav id="mainNav">
+        <div class="row">
+            <div class="col no-padding">
+                <ul class="nav">
+                    <li class="nav-item"><img src="static/app/images/npa.jpg" width="40" height="40"
+                                              style="margin-left: 20px;"/>
+                    </li>
+                    <li class="nav-item">
+                        <div>
+
+                            <a class="nav-link active" style="color: white;
+                        letter-spacing: 2pt; font-size: 16pt;">APPOINTMENT MANAGER</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col no-padding">
+                <ul class="nav justify-content-end" ng-if="currentUser">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" style="color: white;">
+                            <img src="static/app/images/user.png" width="30" height="30"
+                                 style="margin-right: 10px;"/>
+                            <b style="letter-spacing: 1.5pt;">{{ currentUser.name }}</b>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="btn btn-outline-warning"
+                                ng-click="logout()" style="margin-left: 10px; margin-right: 10px;">Sign Out
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- TOP NAV -->
+
+    <div class="row no-gutters" style="height: 90vh;">
+        <div ng-if="false" class="col col-lg-2" style="overflow: hidden;">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist"
+                 style="background-color: lavender; height: 100%; padding-top: 40px;">
+                <a class="nav-link sideNavButton" ui-sref="home.appointments">
+                    <img src="static/app/images/ic_class.png" width="20" height="20"/>
+                    <span>Courses</span>
+                </a>
+                <a class="nav-link sideNavButton" ui-sref="home.assessments">
+                    <img src="static/app/images/ic_assignment.png" width="20" height="20"/>
+                    <span>Assessments</span>
+                </a>
+                <a class="nav-link sideNavButton" ui-sref="home.create-assessment">
+                    <img src="static/app/images/ic_add_circle.png" width="20" height="20"/>
+                    <span>New Assessment</span>
+                </a>
+                <a class="nav-link sideNavButton" ui-sref="home.scripts">
+                    <img src="static/app/images/ic_assignment_turned_in.png" width="20" height="20"/>
+                    <span>Scripts</span>
+                </a>
+            </div>
+        </div>
+        <!-- SIDE NAV -->
+        <div class="col col-lg-12" style="height: 100%; overflow: auto; background-color: beige; padding: 70px;">
+            <ul class="nav justify-content-end" style="margin-bottom: 10px;">
+                <li class="nav-item">
+                    <a class="nav-link active" href="" ui-sref="home.appointments">Staff</a>
+                </li>
+                <li class="nav-item" ng-if="isAdmin()">
+                    <a class="nav-link" href="" ui-sref="home.admin">Admin</a>
+                </li>
+            </ul>
+            <div class="card container-fluid">
+                <div class="tab-content" id="v-pills-tabContent" style="padding: 10px 0 20px 0;">
+                    <div ui-view></div>
+                    <!-- VIEW CONTROLLED USING ANGULAR STATES -->
+                </div>
+            </div>
+        </div>
+        <!-- MAIN VIEW -->
+    </div>
+</div>

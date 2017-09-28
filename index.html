@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html ng-app="lecturer-portal">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>Lecturer Portal</title>
+
+    <!-- CSS -->
+    <!-- bootstrap -->
+    <link href="static/dependencies/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- JS -->
+    <!-- bootstrap and jquery-->
+    <script src="static/dependencies/bootstrap/js/popper.min.js"></script>
+    <script src="static/dependencies/bootstrap/js/jquery-3.2.1.slim.min.js"></script>
+    <script src="static/dependencies/bootstrap/js/bootstrap.js"></script>
+
+    <!-- ANGULAR DEPENDENCIES -->
+    <script src="static/dependencies/angular/js/angular.min.js"></script>
+    <script src="static/dependencies/angular/js/angular-ui-router.js"></script>
+
+    <!-- ANGULAR IMPORTS -->
+    <script src="static/app/main.js"></script>
+    <script src="static/app/main.routes.js"></script>
+    <script src="static/app/modules/applicationController.js"></script>
+    <script src="static/app/modules/login/loginController.js"></script>
+    <script src="static/app/modules/appointments/appointments.js"></script>
+    <script src="static/app/modules/unresolved-appointments-staff/unresolved-appointments-staff.js"></script>
+    <script src="static/app/modules/create-appointment-security/create-appointment-security.js"></script>
+    <script src="static/app/modules/history-apointment-staff/history-apointment-staff.js"></script>
+    <script src="static/app/modules/admin/admin.js"></script>
+</head>
+
+<body ng-controller="ApplicationController">
+<!-- page content -->
+<div ui-view></div>
+</body>
+</html>

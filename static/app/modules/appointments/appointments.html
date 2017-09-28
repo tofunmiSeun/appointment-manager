@@ -1,0 +1,278 @@
+<style>
+    #mainView {
+        padding: 0 20px 40px 20px;
+    }
+
+    #sideBar {
+        height: 400px;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+    }
+</style>
+
+<!-- STYLING -->
+<div ng-controller="appointmentsController" ng-init="init()">
+
+    <ul class="nav" style="margin-bottom: 10px;">
+        <li class="nav-item">
+            <a class="nav-link active" href="" ui-sref="home.appointments" style="text-decoration: underline;">Home</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="" ui-sref="home.unresolved-appointments-staff"
+               style="text-decoration: underline;">Unresolved appointments <span
+                    ng-if="unresolvedAppointmentCountForCurrentStaff > 0"
+                    style="padding-left: 5px;"
+                    class="badge badge-warning">{{unresolvedAppointmentCountForCurrentStaff}}</span></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="" ui-sref="home.appointments-history" style="text-decoration: underline;">History</a>
+        </li>
+    </ul>
+    <!-- NAVIGATION -->
+
+    <div id="mainView">
+
+        <div ng-if="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            {{ successMessage }}
+        </div>
+        <!-- SUCCESS MESSAGE ALERT -->
+
+        <div ng-if="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <a class="close" style="padding-right: 0; font-size: 1em; padding-top: 16px;"
+               ng-click="getAppointmentsWithinSearchDate()">
+                retry
+            </a>
+            {{ errorMessage }}
+        </div>
+        <!-- ERROR MESSAGE ALERT -->
+
+        <div class="row no-gutters">
+            <div class="col col-lg-12" style="overflow: auto;">
+                <h1 class="display-4" style="margin-top: 15px; margin-bottom: 30px; text-align: center;">Your
+                    Appointments Today</h1>
+                <div class="form-row" style=" margin: 0; margin-bottom: 10px;">
+                    <div class="form-group col-auto ">
+                        <label>Filter by Status</label>
+                        <select ng-model="statusToFilterBy" class="form-control" ng-change="getAppointmentsWithinSearchDate()">
+                            <option value="All">All</option>
+                            <option value="Signed In">Signed In</option>
+                            <option value="Signed Out">Signed Out</option>
+                            <option value="Unattended">Unattended</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-auto" style="margin-left: 20px;">
+                        <div style="max-width: 300px; padding-top: 30px;">
+                            <a href="" class="btn btn-success form-control" ng-click="showNewAppointmentModal()">Add new
+                                appointment</a>
+                        </div>
+                    </div>
+                </div>
+                <table class="table">
+                    <thead class="thead-default">
+                    <tr>
+                        <th>#</th>
+                        <th>Visitor's name</th>
+                        <th>Subject</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-if="getAppointmentForStaffLoading">
+                        <td align="center" colspan="6">
+                            <p>Loading...</p>
+                        </td>
+                    </tr>
+                    <tr ng-if="!getAppointmentForStaffLoading && appointmentsForStaff.length == 0">
+                        <td align="center" colspan="6">
+                            <p class="lead">No appointment for you yet.</p>
+                        </td>
+                    </tr>
+                    <tr ng-if="!getAppointmentForStaffLoading" ng-repeat="appointment in appointmentsForStaff">
+                        <th scope="row" ng-bind="$index + 1"></th>
+                        <td>{{ appointment.visitor.name }}</td>
+                        <td>{{ appointment.subject }}</td>
+                        <td>{{ getDateString(appointment.dateTime) }}</td>
+                        <td>{{ appointment.status }}</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" ng-click="viewAppointment(appointment)">View More
+                            </button>
+                            <button class="btn btn-danger btn-sm" ng-click="showDeleteAppointmentModal(appointment)">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    <!-- MAIN VIEW -->
+
+    <div class="modal fade" id="addAppointmentModal" tabindex="-1" role="dialog" aria-labelledby="addAppointmentModal"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add new appointment</h5>
+                </div>
+                <div class="modal-body">
+                    <form style="padding: 15px 30px 0 30px;">
+                        <div class="form-row">
+                            <div class="form-group col-md-7">
+                                <label class="col-form-label">Subject</label>
+                                <input class="form-control" ng-model="newAppointmentObject.subject"/>
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label class="col-form-label">Time</label>
+                                <input type="datetime-local" class="form-control"
+                                       ng-model="newAppointmentObject.dateTime"/>
+                            </div>
+                        </div>
+                        <p class="lead"
+                           style="font-weight: 400; margin-top: 10px; margin-bottom: 0; text-align: center;">
+                            Add Visitor
+                        </p>
+                        <div class="form-row">
+                            <div class="form-group col-md-7">
+                                <label class="col-form-label">Name</label>
+                                <input class="form-control" ng-model="newVisitorForNewAppointment.name"/>
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label class="col-form-label">Phone number</label>
+                                <input class="form-control" ng-model="newVisitorForNewAppointment.phoneNumber"/>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label class="col-form-label">Address</label>
+                                <textarea rows="3" class="form-control"
+                                          ng-model="newVisitorForNewAppointment.address"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <a href="" ng-click="addNewVisitorToList()"
+                                   class="form-control btn-success bg-success btn-xs"
+                                   ng-disabled="newVisitorForNewAppointment.name.length == 0 ||
+                                   newVisitorForNewAppointment.phoneNumber.length == 0 ||
+                                    newVisitorForNewAppointment.address.length == 0">
+                                    Add Visitor
+                                </a>
+                            </div>
+                        </div>
+                        <p class="lead text-muted" ng-if="visitorsForNewAppointment.length > 0"
+                           style="font-weight: 400; margin-top: 10px; margin-bottom: 0; text-align: center;">
+                            Added Visitors
+                        </p>
+                        <div class="form-group row">
+                            <div ng-repeat="visitor in visitorsForNewAppointment" class="col-sm-4"
+                                 style="padding: 10px;">
+                                <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                                    <input class="form-control" id="inlineFormInputGroupUsername2"
+                                           ng-model="visitor.name">
+                                    <a href="" ng-click="deleteVisitorFromList(visitor)"
+                                       class="input-group-addon btn btn-default btn-xs">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" ng-click="addNewAppointment()"
+                            ng-disabled="newAppointmentObject.subject.trim() === '' ||  visitorsForNewAppointment.length === 0">
+                        Create
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ADD APPOINTMENT MODAL -->
+
+    <div class="modal fade" id="editAppointmentModal" tabindex="-1" role="dialog" aria-labelledby="editAppointmentModal"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit appointment</h5>
+                </div>
+                <div class="modal-body">
+                    <form style="padding: 15px 30px 0 30px;">
+                        <div class="form-row">
+                            <div class="form-group col-md-7">
+                                <label class="col-form-label">Subject</label>
+                                <input class="form-control" ng-model="appointmentToEdit.subject"/>
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label class="col-form-label">Appointment Time</label>
+                                <input type="datetime-local" class="form-control"
+                                       ng-model="editTime"/>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="col-form-label">Status</label>
+                                <select disabled ng-model="appointmentToEdit.status" class="form-control">
+                                    <option value="Signed In">Signed In</option>
+                                    <option value="Signed Out">Signed Out</option>
+                                    <option value="Unattended">Unattended</option>
+                                </select>
+                            </div>
+                        </div>
+                        <p class="lead"
+                           style="font-weight: 400; margin-top: 10px; margin-bottom: 0; text-align: center;">
+                            Visitor
+                        </p>
+                        <div class="form-row">
+                            <div class="form-group col-md-7">
+                                <label class="col-form-label">Name</label>
+                                <input class="form-control" ng-model="appointmentToEdit.visitor.name"/>
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label class="col-form-label">Phone number</label>
+                                <input class="form-control" ng-model="appointmentToEdit.visitor.phoneNumber"/>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label class="col-form-label">Address</label>
+                                <textarea rows="3" class="form-control"
+                                          ng-model="appointmentToEdit.visitor.address"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" ng-click="editAppointment()"
+                            ng-disabled="appointmentToEdit.subject.trim() === ''">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- EDIT APPOINTMENT MODAL -->
+
+    <div class="modal fade" id="deleteAppointmentModal" tabindex="-1" role="dialog"
+         aria-labelledby="deleteAppointmentModal"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Are you sure?</h5>
+                </div>
+                <div class="modal-body">
+                    <p class="lead">Delete this appointment ??</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" ng-click="deleteAppointment()">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- DELETE APPOINTMENT MODAL -->
+</div>

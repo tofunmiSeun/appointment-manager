@@ -1,0 +1,124 @@
+<style>
+    #mainView {
+        padding: 0 20px 40px 20px;
+    }
+</style>
+<!-- STYLING -->
+<div ng-controller="createAppointmentController" ng-init="init()">
+
+    <ul class="nav" style="margin-bottom: 10px;">
+        <li class="nav-item">
+            <a class="nav-link active" href="" ui-sref="home.admin" style="text-decoration: underline;">Home</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="" ui-sref="home.create-appointment-security"
+               style="text-decoration: underline;">New appointment</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="" style="text-decoration: underline;">Audit</a>
+        </li>
+    </ul>
+    <!-- NAVIGATION -->
+
+    <div id="mainView">
+
+        <div ng-if="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            {{ successMessage }}
+        </div>
+        <!-- SUCCESS MESSAGE ALERT -->
+
+        <div ng-if="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            {{ errorMessage }}
+        </div>
+        <!-- ERROR MESSAGE ALERT -->
+
+        <div class="col col-lg-12" style="overflow: auto;">
+            <h1 class="display-4" style="margin-top: 15px; margin-bottom: 30px; text-align: center;">New
+                Appointment</h1>
+            <div class="row">
+                <div class="col col-auto ml-auto mr-auto">
+                    <form style="padding: 15px 30px 0 30px;">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label class="col-form-label">Whom to see</label>
+                                <select class="form-control" ng-model="selectedStaffObject">
+                                    <option ng-value="staff"
+                                            ng-repeat="staff in staffsObject">
+                                        {{ staff.name }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-7">
+                                <label class="col-form-label">Subject</label>
+                                <input class="form-control" ng-model="newAppointmentObject.subject"/>
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label class="col-form-label">Time</label>
+                                <input type="datetime-local" class="form-control"
+                                       ng-model="newAppointmentObject.dateTime"/>
+                            </div>
+                        </div>
+                        <p class="lead"
+                           style="font-weight: 400; margin-top: 10px; margin-bottom: 0; text-align: center;">
+                            Add Visitor
+                        </p>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label class="col-form-label">Name</label>
+                                <input class="form-control" ng-model="newVisitorForNewAppointment.name"/>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="col-form-label">Phone number</label>
+                                <input class="form-control" ng-model="newVisitorForNewAppointment.phoneNumber"/>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label class="col-form-label">Address</label>
+                                <textarea rows="3" class="form-control"
+                                          ng-model="newVisitorForNewAppointment.address"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <a href="" ng-click="addNewVisitorToList()"
+                                   class="form-control btn-primary bg-primary btn-xs"
+                                   ng-disabled="newVisitorForNewAppointment.name.length == 0 ||
+                                   newVisitorForNewAppointment.phoneNumber.length == 0 ||
+                                    newVisitorForNewAppointment.address.length == 0">
+                                    Add Visitor
+                                </a>
+                            </div>
+                        </div>
+                        <p class="lead text-muted" ng-if="visitorsForNewAppointment.length > 0"
+                           style="font-weight: 400; margin-top: 10px; margin-bottom: 0; text-align: center;">
+                            Added Visitors
+                        </p>
+                        <div class="form-group row">
+                            <div ng-repeat="visitor in visitorsForNewAppointment" class="col-sm-4"
+                                 style="padding: 10px;">
+                                <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                                    <input class="form-control" id="inlineFormInputGroupUsername2"
+                                           ng-model="visitor.name">
+                                    <a href="" ng-click="deleteVisitorFromList(visitor)"
+                                       class="input-group-addon btn btn-default btn-xs">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="form-group col-md-12">
+                                <button type="button" class="btn btn-success form-control"
+                                        ng-click="addNewAppointment()"
+                                        ng-disabled="newAppointmentObject.subject.trim() === '' ||  visitorsForNewAppointment.length === 0">
+                                    Create Appointment
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
