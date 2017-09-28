@@ -3,7 +3,6 @@ from flask_cors import CORS
 from logic.staffLogic import StaffLogic
 from logic.authorizationLogic import AuthorizationLogic
 from logic.appointmentLogic import AppointmentLogic
-
 app = Flask(__name__)
 CORS(app)
 

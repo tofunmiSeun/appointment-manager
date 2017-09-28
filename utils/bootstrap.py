@@ -10,15 +10,32 @@ class Bootstrap:
             'staffId': 'toffs',
             'name': 'Ogungbaigbe Tofunmi',
             'department': 'Procurement',
-            'phoneNumber': '08167494821'
+            'phoneNumber': '08167494821',
+            'isSecurityStaff': True,
         }
 
         StaffDB.new_staff(staff_obj)
 
         auth_object = {
-            'staffId': 'toffs',
-            'password': 'spartans'
+            'staffId': 'tofunmi',
+            'password': 'tofunmi'
         }
 
         AuthorizationDB.new_authorization(auth_object)
 
+        staff_obj = {
+            'staffId': 'gbemi',
+            'name': 'Gbemi Falade',
+            'department': 'Sales',
+            'phoneNumber': '08167494821',
+            'isSecurityStaff': False,
+        }
+
+        StaffDB.new_staff(staff_obj)
+
+        auth_object = {
+            'staffId': 'gbemi',
+            'password': 'gbemi'
+        }
+
+        AuthorizationDB.new_authorization(auth_object)
