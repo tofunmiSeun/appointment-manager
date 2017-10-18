@@ -1,5 +1,5 @@
 var app = angular.module('lecturer-portal', ['ui.router']);
-app.constant('SERVER_URL', 'https://appointment-management.herokuapp.com/api');
+app.constant('SERVER_URL', 'https://localhost:8080/api');
 app.constant('AUTH_EVENTS', {
     unAuthenticated: 'unauthenticated',
     unAuthorized: 'unauthorized',
